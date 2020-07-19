@@ -1,0 +1,38 @@
+<?php
+$db_server = "46.174.50.7";
+$db_user = "u16652_med";
+$db_password = "89223089871";
+$db_name = "u16652_tour"; 
+    $dbh = new PDO("mysql:host=$db_server;dbname=$db_name", $db_user, $db_password,array(PDO::MYSQL_ATTR_INIT_COMMAND=>"SET NAMES utf8"));
+    $dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	$stmt1 = $dbh->prepare("SELECT * FROM ts_tmp WHERE team_id=(SELECT MAX(team_id) FROM ts_tmp)");
+	$stmt1->execute();
+	$id = $stmt1->fetchColumn();
+$plmain = $_POST['plmain'];
+$pl2 = $_POST['pl2'];
+$pl3 = $_POST['pl3'];
+$pl4 = $_POST['pl4'];
+$pl5 = $_POST['pl5'];
+$vkmain = $_POST['vkmain'];
+$vk2 = $_POST['vk2'];
+$vk3 = $_POST['vk3']; 
+$vk4 = $_POST['vk4']; 
+$vk5 = $_POST['vk5']; 
+$stmt = $dbh->prepare("INSERT INTO ts_players (plmain, pl2, pl3, pl4, pl5, vkmain, vk2, vk3, vk4, vk5, team_id) VALUES (:plmain, :pl2, :pl3, :pl4, :pl5, :vkmain, :vk2, :vk3, :vk4, :vk5, :team_id)");
+$stmt->bindParam(':plmain', $plmain);
+$stmt->bindParam(':pl2', $pl2);
+$stmt->bindParam(':pl3', $pl3);
+$stmt->bindParam(':pl4', $pl4);
+$stmt->bindParam(':pl5', $pl5);
+$stmt->bindParam(':vkmain', $vkmain);
+$stmt->bindParam(':vk2', $vk2);
+$stmt->bindParam(':vk3', $vk3);
+$stmt->bindParam(':vk4', $vk4);
+$stmt->bindParam(':vk5', $vk5);
+$stmt->bindParam(':team_id', $id);
+$stmt->execute();
+$stmt2 = $dbh->prepare("UPDATE ts_pending,ts_players SET ts_pending.players=ts_players.id WHERE ts_pending.id=ts_players.team_id");
+$stmt2->execute();
+$stmt3 = $dbh->prepare("UPDATE ts_pending,ts_players SET ts_pending.pl_main=ts_players.plmain WHERE ts_pending.id=ts_players.team_id");
+$stmt3->execute();
+?>
